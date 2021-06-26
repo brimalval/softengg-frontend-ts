@@ -1,0 +1,36 @@
+.home {
+	position: relative;
+}
+
+.navLink {
+	text-decoration: none;
+	color: inherit;
+}
+
+.navLinks {
+	list-style: none;
+	float: left;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+}
+
+.navLinks li {
+	margin-left: 2rem;
+}
+
+.navRight {
+	display: flex;
+	justify-content: flex-end;
+	border-left: 1px solid gray; 
+	flex-grow: 1;
+}
+
+.navTitle {
+	padding-right: 2rem;
+}
+
+.appBar {
+	z-index: 999;
+	overflow: hidden;
+}

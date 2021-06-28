@@ -6,7 +6,6 @@ import {
     Drawer,
     List,
     ListItem,
-    ListItemIcon,
     ListItemText,
     Divider,
     Toolbar,
@@ -159,7 +158,7 @@ const App: React.FC = () => {
                                             </Typography>
                                         </ListItemText>
                                     </ListItem>
-                                    <Divider key={`div${route.label}`}/>
+                                    <Divider key={`div${route.label}`} />
                                 </React.Fragment>
                             ))}
                     </List>

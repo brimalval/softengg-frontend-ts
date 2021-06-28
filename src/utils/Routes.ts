@@ -1,7 +1,5 @@
 import { Home, Users, Projects, ErrorPage } from "../components";
 import HomeIcon from "@material-ui/icons/Home";
-import { OverridableComponent } from "@material-ui/core/OverridableComponent";
-import { SvgIconTypeMap } from "@material-ui/core";
 
 export type RouteData = {
     path: string;

@@ -1,7 +1,8 @@
 #!/bin/bash
 component=$1
-mkdir $component
-cd $component
+extrapath=$2
+mkdir $extrapath/$component
+cd $extrapath/$component
 echo > "${component}.tsx" && echo > "${component}.module.css"
 code "${component}.module.css" && code "${component}.tsx" 
 cd ..

@@ -22,7 +22,6 @@ const Task = ({ task, index }: Props) => {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}
-                    style={{marginBottom:"5"}}
                 >
                     <CardContent>
                         <Typography variant="h6">{task.name}</Typography>

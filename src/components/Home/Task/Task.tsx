@@ -8,6 +8,7 @@ import {
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
 import { KanbanItem } from "../../../utils/consts";
+import styles from './Task.module.css';
 
 interface Props {
     task: KanbanItem;
@@ -19,6 +20,7 @@ const Task = ({ task, index }: Props) => {
         <Draggable draggableId={task.id.toString()} index={index}>
             {(provided) => (
                 <Card
+                    className={styles.card}
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                     ref={provided.innerRef}

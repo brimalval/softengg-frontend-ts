@@ -62,7 +62,7 @@ const Home = () => {
 
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
-            <Grid container spacing={3}>
+            <Grid container spacing={3} justify="center">
                 {Object.entries(currTasks.columns).map(([id, column]) => (
                     <Grid item xs={4} sm={3} key={`col${id}`}>
                         <TaskColumn

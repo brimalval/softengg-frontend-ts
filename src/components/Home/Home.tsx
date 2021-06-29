@@ -4,6 +4,7 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { TaskColumn } from "./";
 import { Grid } from "@material-ui/core";
 
+
 const Home = () => {
     const [currTasks, setTasks] = useState(tasks);
     const handleDragEnd = (result: DropResult) => {
@@ -37,7 +38,7 @@ const Home = () => {
                 columns: {
                     ...currTasks.columns,
                     [destination]: newDesCol,
-					[source]: newSourceCol
+                    [source]: newSourceCol,
                 },
             });
             return;
@@ -56,15 +57,13 @@ const Home = () => {
                 [source]: newSourceCol,
             },
         });
-
-        console.log(currTasks);
     };
 
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
             <Grid container spacing={3} justify="center">
                 {Object.entries(currTasks.columns).map(([id, column]) => (
-                    <Grid item xs={4} sm={3} key={`col${id}`}>
+                    <Grid item xs={6} sm={4} md={3} key={`col${id}`}>
                         <TaskColumn
                             title={column.title}
                             id={column.id}

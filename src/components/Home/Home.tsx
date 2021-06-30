@@ -4,6 +4,24 @@ import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { TaskColumn } from "./";
 import { Grid } from "@material-ui/core";
 
+interface ColumnListProps {
+    tasks: typeof tasks;
+}
+// Converted to a pure component to prevent unnecessary re-drawing
+class ColumnList extends React.PureComponent<ColumnListProps> {
+    render() {
+        const { tasks } = this.props;
+        return Object.entries(tasks.columns).map(([id, column]) => (
+            <Grid item xs={6} sm={4} md={3} key={`col${id}`}>
+                <TaskColumn
+                    title={column.title}
+                    id={column.id}
+                    tasks={column.tasks}
+                />
+            </Grid>
+        ));
+    }
+}
 
 const Home = () => {
     const [currTasks, setTasks] = useState(tasks);
@@ -62,15 +80,7 @@ const Home = () => {
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
             <Grid container spacing={3} justify="center">
-                {Object.entries(currTasks.columns).map(([id, column]) => (
-                    <Grid item xs={6} sm={4} md={3} key={`col${id}`}>
-                        <TaskColumn
-                            title={column.title}
-                            id={column.id}
-                            tasks={column.tasks}
-                        />
-                    </Grid>
-                ))}
+                <ColumnList tasks={currTasks} />
             </Grid>
         </DragDropContext>
     );

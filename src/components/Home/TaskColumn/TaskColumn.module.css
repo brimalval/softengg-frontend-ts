@@ -1,1 +1,4 @@
-
+.draggingOver {
+	transition: 200ms ease-in-out;
+	background-color: purple;
+}

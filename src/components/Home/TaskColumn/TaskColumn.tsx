@@ -1,10 +1,9 @@
-import { Card, CardContent, Typography, useTheme } from "@material-ui/core";
+import { Card, CardContent, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import React from "react";
 import { Droppable } from "react-beautiful-dnd";
 import { KanbanItem } from "../../../utils/consts";
 import { Task } from "../";
-import styles from "./TaskColumn.module.css";
 
 const useStyles = makeStyles({
     isDraggingOver: {
@@ -33,7 +32,6 @@ class TaskList extends React.PureComponent<Props> {
 
 const TaskColumn = ({ title, tasks, id }: Props) => {
     const dynamicStyles = useStyles();
-    const theme = useTheme();
 
     return (
         <Droppable droppableId={id.toString()}>

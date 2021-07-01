@@ -18,8 +18,14 @@ import {
 import { createMuiTheme, ThemeProvider } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
 import CloseIcon from "@material-ui/icons/Close";
-import { Switch, NavLink, Route, useLocation } from "react-router-dom";
-import { routes } from "./utils/Routes";
+import {
+    Switch,
+    NavLink,
+    Route,
+    useLocation,
+    Redirect,
+} from "react-router-dom";
+import { routes, redirects } from "./utils/Routes";
 
 const theme = createMuiTheme({
     palette: {
@@ -49,7 +55,6 @@ const useStyle = makeStyles({
 
 const App: React.FC = () => {
     const classes = useStyle();
-
     const mobile = useMediaQuery(theme.breakpoints.up("sm"));
 
     const [xsMenuOpen, setXSMenuOpen] = useState(false);
@@ -64,6 +69,7 @@ const App: React.FC = () => {
     }, [mobile]);
 
     const location = useLocation();
+    console.log(location);
 
     return (
         <ThemeProvider theme={theme}>
@@ -90,7 +96,11 @@ const App: React.FC = () => {
                                                         borderRadius: 0,
                                                     }}
                                                     component={NavLink}
-                                                    to={route.path}
+                                                    to={
+                                                        route.navPath
+                                                            ? route.navPath
+                                                            : route.path
+                                                    }
                                                     exact
                                                     className={styles.navLink}
                                                     activeClassName={
@@ -130,6 +140,9 @@ const App: React.FC = () => {
                     </Toolbar>
                 </AppBar>
                 <Switch>
+                    {redirects.map((redirect) => {
+                        return <Redirect {...redirect} />;
+                    })}
                     {routes.map((route) => {
                         return <Route key={route.label} {...route} />;
                     })}
@@ -149,7 +162,11 @@ const App: React.FC = () => {
                                             location.pathname === route.path
                                         }
                                         component={NavLink}
-                                        to={route.path}
+                                        to={
+                                            route.navPath
+                                                ? route.navPath
+                                                : route.path
+                                        }
                                         onClick={toggleXSMenu}
                                     >
                                         <ListItemText>

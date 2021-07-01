@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { tasks } from "../../utils/consts";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 import { TaskColumn } from "./";
-import { Grid } from "@material-ui/core";
-
+import { AppBar, Grid, Tabs, Tab, Typography } from "@material-ui/core";
+import { useHistory, useLocation, useParams } from "react-router-dom";
 interface ColumnListProps {
     tasks: typeof tasks;
 }
@@ -23,8 +23,22 @@ class ColumnList extends React.PureComponent<ColumnListProps> {
     }
 }
 
+const getBaseURL = (location: { pathname: string } ) => {
+    return location.pathname.slice(0, location.pathname.lastIndexOf("/"));
+};
+
 const Home = () => {
+    const location = useLocation();
+    const { sub } = useParams<{ sub: string | undefined }>();
+
     const [currTasks, setTasks] = useState(tasks);
+    const [tab, setTab] = useState(sub ? sub : "main");
+
+    useEffect(() => {
+        setTab(sub ? sub : "main");
+    }, [sub])
+
+
     const handleDragEnd = (result: DropResult) => {
         const destination = result.destination?.droppableId;
         const source = result.source.droppableId;
@@ -68,6 +82,7 @@ const Home = () => {
             tasks: newSourceTasks,
         };
 
+        console.log(currTasks);
         setTasks({
             ...currTasks,
             columns: {
@@ -77,10 +92,39 @@ const Home = () => {
         });
     };
 
+    const history = useHistory();
+    const handleTabs = (event: React.ChangeEvent<{}>, newValue: string) => {
+        history.push(getBaseURL(location) + "/" + newValue);
+        setTab(newValue);
+    };
+
+
     return (
         <DragDropContext onDragEnd={handleDragEnd}>
-            <Grid container spacing={3} justify="center">
-                <ColumnList tasks={currTasks} />
+            <AppBar position="relative" elevation={0}>
+                <Tabs
+                    onChange={handleTabs}
+                    value={tab}
+                    aria-label="tab selector"
+                >
+                    <Tab value="main" label="Tab One" />
+                    <Tab value="other" label="Tab Two" />
+                    <Tab value="third" label="Tab Three" />
+                </Tabs>
+            </AppBar>
+            <Grid
+                container
+                spacing={3}
+                justify="center"
+                style={{ padding: "5px" }}
+            >
+                {tab === "main" && <ColumnList tasks={currTasks} />}
+                {tab === "other" && (
+                    <Typography variant="h6">Second Page</Typography>
+                )}
+                {tab === "third" && (
+                    <Typography variant="h6">Third Page</Typography>
+                )}
             </Grid>
         </DragDropContext>
     );

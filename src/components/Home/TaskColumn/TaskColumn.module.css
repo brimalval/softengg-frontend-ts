@@ -2,3 +2,8 @@
 	transition: 200ms ease-in-out;
 	background-color: purple;
 }
+
+.colContainer {
+	border-radius: 0;
+	padding: 5px;
+}

@@ -7,15 +7,15 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
-import { KanbanItem } from "../../../utils/consts";
+import { ProjectData } from "../../../utils/kanban";
 import styles from './Task.module.css';
 
 interface Props {
-    task: KanbanItem;
+    task: ProjectData;
     index: number;
 }
 
-const Task = ({ task, index }: Props) => {
+const Task: React.FC<Props> = ({ task, index }) => {
     return (
         <Draggable draggableId={task.id.toString()} index={index}>
             {(provided) => (

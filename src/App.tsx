@@ -81,7 +81,7 @@ const App: React.FC = () => {
                 >
                     <Toolbar>
                         <Typography variant="h6" className={styles.navTitle}>
-                            Hello
+                            Kanban
                         </Typography>
                         <div className={styles.navRight}>
                             <ul className={styles.navLinks}>

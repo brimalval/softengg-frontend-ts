@@ -1,9 +1,10 @@
-import { Card, CardContent, Typography } from "@material-ui/core";
+import { Paper, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import React from "react";
 import { Droppable } from "react-beautiful-dnd";
-import { KanbanItem } from "../../../utils/consts";
+import { ProjectData } from "../../../utils/kanban";
 import { Task } from "../";
+import styles from "./TaskColumn.module.css";
 
 const useStyles = makeStyles({
     isDraggingOver: {
@@ -14,7 +15,7 @@ const useStyles = makeStyles({
 export interface Props {
     title: string;
     id: number | string;
-    tasks: Array<KanbanItem>;
+    tasks: Array<ProjectData>;
 }
 
 // Converted to a pure component to prevent unnecessary redrawing
@@ -31,31 +32,29 @@ class TaskList extends React.PureComponent<Props> {
 }
 
 const TaskColumn = ({ title, tasks, id }: Props) => {
-    const dynamicStyles = useStyles();
+    const classes = useStyles();
 
     return (
         <Droppable droppableId={id.toString()}>
             {(provided, snapshot) => (
-                <Card
+                <Paper
                     {...provided.droppableProps}
                     key={`col${title}`}
                     ref={provided.innerRef}
+                    className={styles.colContainer}
                 >
-                    <CardContent>
-                        <Typography variant="h6">{title}</Typography>
-                    </CardContent>
-                    <CardContent
+                    <Typography variant="h6">{title}</Typography>
+                    <Paper
                         className={
                             snapshot.isDraggingOver
-                                ? dynamicStyles.isDraggingOver
+                                ? classes.isDraggingOver
                                 : ""
                         }
                     >
                         <TaskList id={id} tasks={tasks} title={title} />
-
                         {provided.placeholder}
-                    </CardContent>
-                </Card>
+                    </Paper>
+                </Paper>
             )}
         </Droppable>
     );

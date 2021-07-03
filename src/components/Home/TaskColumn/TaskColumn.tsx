@@ -2,7 +2,7 @@ import { Paper, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 import React from "react";
 import { Droppable } from "react-beautiful-dnd";
-import { ProjectData } from "../../../utils/kanban";
+import { TaskData } from "../../../utils/kanban";
 import { Task } from "../";
 import styles from "./TaskColumn.module.css";
 
@@ -15,7 +15,7 @@ const useStyles = makeStyles({
 export interface Props {
     title: string;
     id: number | string;
-    tasks: Array<ProjectData>;
+    tasks: TaskData[];
 }
 
 // Converted to a pure component to prevent unnecessary redrawing
@@ -25,7 +25,7 @@ class TaskList extends React.PureComponent<Props> {
             <Task
                 index={index}
                 task={item}
-                key={`task${item.id}${item.name}`}
+                key={`task${item.id}`}
             />
         ));
     }

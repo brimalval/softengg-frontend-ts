@@ -19,7 +19,7 @@ class ColumnList extends React.PureComponent<ColumnListProps> {
                 <TaskColumn
                     title={column.title}
                     id={column.id}
-                    tasks={column.tasks}
+                    tasks={column.tasks.map((taskId) => tasks.allTasks[taskId])}
                 />
             </Grid>
         ));
@@ -50,9 +50,7 @@ const Home = () => {
 
         const newSourceTasks = Array.from(currTasks.columns[source].tasks);
         const newDestTasks = Array.from(currTasks.columns[destination].tasks);
-        const task = newSourceTasks.find(
-            (task) => task.id.toString() === result.draggableId
-        );
+        const task = newSourceTasks.find((task) => task === result.draggableId);
 
         newSourceTasks.splice(result.source.index, 1);
 
@@ -84,7 +82,6 @@ const Home = () => {
             tasks: newSourceTasks,
         };
 
-        console.log(currTasks);
         setTasks({
             ...currTasks,
             columns: {

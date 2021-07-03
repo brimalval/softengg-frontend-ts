@@ -7,15 +7,16 @@ import {
 } from "@material-ui/core";
 import React from "react";
 import { Draggable } from "react-beautiful-dnd";
-import { ProjectData } from "../../../utils/kanban";
+import { TaskData, projects } from "../../../utils/kanban";
 import styles from './Task.module.css';
 
 interface Props {
-    task: ProjectData;
+    task: TaskData;
     index: number;
 }
 
 const Task: React.FC<Props> = ({ task, index }) => {
+    const project = projects.find((project) => project.id === task.project);
     return (
         <Draggable draggableId={task.id.toString()} index={index}>
             {(provided) => (
@@ -26,12 +27,13 @@ const Task: React.FC<Props> = ({ task, index }) => {
                     ref={provided.innerRef}
                 >
                     <CardContent>
-                        <Typography variant="h6">{task.name}</Typography>
+                        <Typography variant="h6">{project ? project.name : ""}</Typography>
+                        <Typography variant="subtitle2" color="textSecondary">
+                            Task: {task.title}
+                        </Typography>
                     </CardContent>
                     <CardContent>
-                        <Typography variant="body2" color="textSecondary">
-                            Lead: {task.lead}
-                        </Typography>
+                        <Typography variant="body2">{task.description}</Typography>
                     </CardContent>
                     <CardActions>
                         <Button>Learn more</Button>

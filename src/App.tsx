@@ -69,7 +69,6 @@ const App: React.FC = () => {
     }, [mobile]);
 
     const location = useLocation();
-    console.log(location);
 
     return (
         <ThemeProvider theme={theme}>
@@ -141,7 +140,7 @@ const App: React.FC = () => {
                 </AppBar>
                 <Switch>
                     {redirects.map((redirect) => {
-                        return <Redirect {...redirect} />;
+                        return <Redirect key={`redir${redirect.from}`} {...redirect} />;
                     })}
                     {routes.map((route) => {
                         return <Route key={route.label} {...route} />;

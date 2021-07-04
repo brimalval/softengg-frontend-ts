@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { Button, Paper, Toolbar, Typography } from "@material-ui/core";
+import React, { useState } from "react";
+import { Paper, Theme } from "@material-ui/core";
+import { createStyles, withStyles } from "@material-ui/styles";
 import styles from "./Dashboard.module.css";
 /** Table imports */
 import {
@@ -44,6 +45,28 @@ const getDateString = (date: Date) => {
     } ${date.getDate()}`;
 };
 
+const StyledTableCell = withStyles((theme: Theme) =>
+    createStyles({
+        head: {
+            backgroundColor: theme.palette.secondary.main,
+            color: theme.palette.common.white,
+            fontWeight: "bold",
+        },
+        body: {
+            fontSize: 14,
+        },
+    })
+)(TableCell);
+
+const StyledTableRow = withStyles((theme: Theme) =>
+    createStyles({
+        root: {
+            "&:nth-of-type(odd)": {
+                backgroundColor: theme.palette.action.hover,
+            },
+        },
+    })
+)(TableRow);
 interface TableHeaderItemProps {
     alignment?: "left" | "right" | "center";
     id: string;
@@ -58,7 +81,7 @@ const TableHeaderItem: React.FC<TableHeaderItemProps> = (props) => {
         props;
 
     return (
-        <TableCell align={alignment ?? "right"}>
+        <StyledTableCell align={alignment ?? "right"}>
             <TableSortLabel
                 active={currentSortIndex === id}
                 onClick={() => handler(id)}
@@ -66,7 +89,7 @@ const TableHeaderItem: React.FC<TableHeaderItemProps> = (props) => {
             >
                 {label}
             </TableSortLabel>
-        </TableCell>
+        </StyledTableCell>
     );
 };
 
@@ -80,7 +103,14 @@ const Dashboard: React.FC<Props> = (props) => {
     });
     const { projects, setProjects } = props;
     const [sortedProjects, setSortedProjects] = useState(projects);
+    const [page, setPage] = useState(0);
+    const [rowsPerPage, setRowsPerPage] = useState(10);
 
+    /** Handler function for setting the sorting criteria
+     * 
+     * @function handleSort
+     * @param field string that denotes the property that will be sorted according to
+     */
     const handleSort = (field: string) => {
         if (field === sortStates.sortKey) {
             const currDirection = sortStates.sortDirection;
@@ -97,6 +127,39 @@ const Dashboard: React.FC<Props> = (props) => {
         });
     };
 
+    /**
+     * Handler function for changing the page number
+     * 
+     * @function handleChangePage
+     * @param event
+     * @param newVal new value of the page number
+     */
+    const handleChangePage = (event: unknown, newVal: number) => {
+        setPage(newVal);
+    };
+
+    /**
+     * Handler function for changing the number of rows per page
+     * 
+     * @function handleChangeRowsPerPage
+     * @param event React.ChangeEvent<HTMLInputElement>
+     */
+    const handleChangeRowsPerPage = (
+        event: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        setRowsPerPage(parseInt(event.target.value));
+        setPage(0);
+    };
+
+    /** Comparator for string objects
+     * Results in -1 if the first string comes first in lexical order, 1 if second, 0 otherwise
+     * the result gets multiplied by -1 if the user wants to sort in descending order
+     * 
+     * @param strA first string being compared
+     * @param strB second string being compared
+     * @param order either "asc" or "desc" 
+     * @returns 1 | 0 | -1
+     */
     const stringComparator = (
         strA: string,
         strB: string,
@@ -105,35 +168,99 @@ const Dashboard: React.FC<Props> = (props) => {
         const strALower = strA.toLowerCase();
         const strBLower = strB.toLowerCase();
         if (strALower < strBLower) {
-            return order === "desc" ? -1 : 1;
+            return order === "asc" ? -1 : 1;
         }
         if (strALower > strBLower) {
-            return order === "desc" ? 1 : -1;
+            return order === "asc" ? 1 : -1;
         }
         return 0;
     };
 
-    /** Sorting the projects */
-    useEffect(() => {
+    /** Comparator for date objects
+     * Results in -1 if the first date is earlier, 1 if larger, 0 otherwise
+     * the result gets multiplied by -1 if the user wants to sort in descending order
+     * 
+     * @param dateA Date being compared
+     * @param dateB Date being compared
+     * @param order either "asc" or "desc" 
+     * @returns 1 | 0 | -1
+     */
+    const dateComparator = (
+        dateA: Date,
+        dateB: Date,
+        order: "asc" | "desc"
+    ) => {
+        const timeDiff = dateA.getTime() - dateB.getTime();
+        return timeDiff * (order === "asc" ? 1 : -1);
+    };
+
+    /** Function that sorts the parameter ProjectData array according to the
+     * sorting criteria defined by sortStates.sortKey. It goes in ascending order
+     * or descending order depending on the value of sortStates.sortDirection. 
+     * 
+     * @function getSortedProjects
+     * @param p array of ProjectData
+     * @returns sorted ProjectData[]
+     */
+    const getSortedProjects = (p: ProjectData[]) => {
         const sortKey = sortStates.sortKey as keyof ProjectData;
         if (!sortKey) {
-            return;
+            return sortedProjects;
         }
-        console.log(sortKey, sortStates);
         /** Use the string comparator for all keys except date and deadline */
         if (sortKey !== "date" && sortKey !== "deadline") {
-            setSortedProjects(
-                projects.sort((projectA, projectB) => {
+            return p.sort((projectA, projectB) => {
+                return stringComparator(
+                    projectA[sortKey],
+                    projectB[sortKey],
+                    sortStates.sortDirection
+                );
+            });
+        } else {
+            return p.sort((projectA, projectB) => {
+                const order = sortStates.sortDirection;
+                /**
+                 * I swear this is the FizzBuzz problem but I'm too tired to think right now
+                 * 
+                 * First case sorts by ID if both projects have a deadline of "ASAP"
+                 */
+                if (
+                    projectA[sortKey] === "ASAP" &&
+                    projectB[sortKey] === "ASAP"
+                ) {
+                    /**
+                     * Ensure that "id" is read as a property of ProjectData
+                     * then ensure that the value you get back is a string
+                     * 
+                     * Typescript is strict about what you pass into functions
+                     */
                     return stringComparator(
-                        projectA[sortKey],
-                        projectB[sortKey],
+                        projectA["id" as keyof ProjectData] as string,
+                        projectB["id" as keyof ProjectData] as string,
                         sortStates.sortDirection
                     );
-                })
-            );
+                }
+                if (projectA[sortKey] === "ASAP") {
+                    return -1 * (order === "asc" ? 1 : -1);
+                }
+                if (projectB[sortKey] === "ASAP") {
+                    return 1 * (order === "asc" ? 1 : -1);
+                }
+                return dateComparator(
+                    projectA[sortKey] as Date,
+                    projectB[sortKey] as Date,
+                    sortStates.sortDirection
+                );
+            });
         }
-    }, [sortStates]);
+    };
 
+    /** 
+     * Helper function for returning a table header with all the necessary props
+     * 
+     * @function getHeaderItem
+     * @return TableHeaderItem react component
+     */
     const getHeaderItem = (
         id: string,
         label: string,
@@ -152,12 +279,12 @@ const Dashboard: React.FC<Props> = (props) => {
     };
 
     return (
-        <div className={styles.tblContainer}>
+        <Paper className={styles.tblContainer}>
             <TableContainer component={Paper}>
                 <Table className={styles.tbl}>
                     <TableHead>
                         <TableRow>
-                            {getHeaderItem("id", "ID", "center")}
+                            {getHeaderItem("id", "ID", "right")}
                             {getHeaderItem("name", "Name")}
                             {getHeaderItem("date", "Date")}
                             {getHeaderItem("deadline", "Deadline")}
@@ -170,46 +297,60 @@ const Dashboard: React.FC<Props> = (props) => {
                     </TableHead>
                     <TableBody>
                         {projects &&
-                            sortedProjects.map((project, index) => {
-                                const { date, deadline } = project;
-                                return (
-                                    <TableRow key={index}>
-                                        <TableCell align="center">
-                                            {project.id}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {project.name}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {getDateString(date)}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {typeof deadline === "object"
-                                                ? getDateString(deadline)
-                                                : deadline}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {project.engagement.toString()}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {project.lead}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {project.priority.toString()}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {project.phase.toString()}
-                                        </TableCell>
-                                        <TableCell align="right">
-                                            {project.status.toString()}
-                                        </TableCell>
-                                    </TableRow>
-                                );
-                            })}
+                            getSortedProjects(sortedProjects)
+                                .slice(
+                                    page * rowsPerPage,
+                                    page * rowsPerPage + rowsPerPage
+                                )
+                                .map((project, index) => {
+                                    const { date, deadline } = project;
+                                    return (
+                                        <StyledTableRow key={index}>
+                                            <TableCell align="right">
+                                                {project.id}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {project.name}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {getDateString(date)}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {typeof deadline === "object"
+                                                    ? getDateString(deadline)
+                                                    : deadline}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {project.engagement.toString()}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {project.lead}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {project.priority.toString()}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {project.phase.toString()}
+                                            </TableCell>
+                                            <TableCell align="right">
+                                                {project.status.toString()}
+                                            </TableCell>
+                                        </StyledTableRow>
+                                    );
+                                })}
                     </TableBody>
                 </Table>
             </TableContainer>
-        </div>
+            <TablePagination
+                onChangePage={handleChangePage}
+                rowsPerPage={rowsPerPage}
+                rowsPerPageOptions={[10, 25, 50, 100]}
+                count={projects.length}
+                component="div"
+                page={page}
+                onChangeRowsPerPage={handleChangeRowsPerPage}
+            />
+        </Paper>
     );
 };
 

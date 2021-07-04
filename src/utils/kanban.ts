@@ -55,7 +55,7 @@ export interface ProjectData {
     name: string;
     phase: Phase;
     priority: Priority;
-    deadline: Date | "ASAP";
+    deadline: Date | "ASAP" | undefined;
     engagement: Engagement;
 }
 
@@ -98,29 +98,29 @@ export const projects: Array<ProjectData> = [
     {
         id: "dfjka5",
         lead: "John Doe",
-        date: new Date(),
+        date: new Date("2021/06/02"),
         status: Status.COMPLETE,
         name: "Workers United",
         phase: Phase.POST_CONSTRUCTION,
         priority: Priority.MED,
-        deadline: "ASAP",
+        deadline: new Date("2021/07/02"),
         engagement: Engagement.BIDDING,
     },
     {
         id: "afgl1",
         lead: "Jill Doe",
-        date: new Date(),
+        date: new Date("2021/07/02"),
         status: Status.COMPLETE,
         name: "Into the Void",
         phase: Phase.POST_CONSTRUCTION,
         priority: Priority.MED,
-        deadline: "ASAP",
+        deadline: new Date("2021/08/02"),
         engagement: Engagement.BIDDING,
     },
     {
         id: "3adfk",
         lead: "Eric Son",
-        date: new Date(),
+        date: new Date("2021/02/23"),
         status: Status.IN_PROGRESS,
         name: "XYZ Company",
         phase: Phase.POST_CONSTRUCTION,

@@ -1,0 +1,9 @@
+.tbl {
+	min-width: 500px;
+}
+
+.tblContainer {
+	overflow: scroll;
+	max-width: 100%;
+	height: 500px;
+}

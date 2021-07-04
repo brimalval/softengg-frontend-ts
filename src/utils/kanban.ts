@@ -5,7 +5,7 @@ export interface Column {
     title: string;
 }
 
-enum Status {
+export enum Status {
     IN_PROGRESS = "in_progress",
     COMPLETE = "complete",
     NOT_STARTED = "not_started",
@@ -13,7 +13,7 @@ enum Status {
     OVERDUE = "overdue",
 }
 
-enum Phase {
+export enum Phase {
     NEGOTIATION = "negotiation",
     SCHEMATIC = "schematic",
     DESIGN_DEV = "design_development",
@@ -23,13 +23,13 @@ enum Phase {
     BIDDING = "bidding",
 }
 
-enum Priority {
+export enum Priority {
     LOW = "low",
     MED = "medium",
     HIGH = "high",
 }
 
-enum Engagement {
+export enum Engagement {
     NEGOTIATION = "negotiation",
     SCHEMATIC = "schematic",
     DESIGN_DEVELOPMENT = "design_development",

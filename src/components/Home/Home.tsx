@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { tasks } from "../../utils/kanban";
+import { tasks, projects } from "../../utils/kanban";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
-import { TaskColumn } from "./";
+import { TaskColumn, Dashboard, Logs } from "./";
 import { AppBar, Grid, Tabs, Tab, Typography } from "@material-ui/core";
 import { useHistory, useLocation, useParams } from "react-router-dom";
 import DashboardIcon from "@material-ui/icons/Dashboard";
@@ -32,10 +32,21 @@ const getBaseURL = (location: { pathname: string }) => {
 
 const Home = () => {
     const location = useLocation();
+    /** State used to define what tab the user is */
     const { sub } = useParams<{ sub: string | undefined }>();
-
+    /** States for Kanban */
     const [currTasks, setTasks] = useState(tasks);
     const [tab, setTab] = useState(sub ? sub : "main");
+    /** States for dashboard */
+    const [currProjects, setProjects] = useState(projects.sort((pA, pB) => {
+        const pALower = pA.name.toLowerCase();
+        const pBLower = pB.name.toLowerCase();
+        if (pALower < pBLower) return -1;
+        if (pALower > pBLower) return 1;
+        return 0;
+    }));
+    /** States for logs */
+    const [logs, setLogs] = useState<string[]>([]);
 
     useEffect(() => {
         setTab(sub ? sub : "main");
@@ -137,12 +148,8 @@ const Home = () => {
                 style={{ padding: "5px" }}
             >
                 {tab === "main" && <ColumnList tasks={currTasks} />}
-                {tab === "other" && (
-                    <Typography variant="h6">Second Page</Typography>
-                )}
-                {tab === "third" && (
-                    <Typography variant="h6">Third Page</Typography>
-                )}
+                {tab === "other" && <Dashboard projects={currProjects} setProjects={setProjects} />}
+                {tab === "third" && <Logs logs={logs} setLogs={setLogs} />}
             </Grid>
         </DragDropContext>
     );

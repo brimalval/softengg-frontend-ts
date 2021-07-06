@@ -7,6 +7,7 @@ import { useHistory, useLocation, useParams } from "react-router-dom";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import ListIcon from "@material-ui/icons/List";
 import ArchiveIcon from "@material-ui/icons/Archive";
+import styles from "./Home.module.css";
 interface ColumnListProps {
     tasks: typeof tasks;
 }
@@ -15,7 +16,7 @@ class ColumnList extends React.PureComponent<ColumnListProps> {
     render() {
         const { tasks } = this.props;
         return Object.entries(tasks.columns).map(([id, column]) => (
-            <Grid item xs={6} sm={4} md={3} key={`col${id}`}>
+            <Grid item xs={6} sm={3} md={2} key={`col${id}`}>
                 <TaskColumn
                     title={column.title}
                     id={column.id}
@@ -38,13 +39,7 @@ const Home = () => {
     const [currTasks, setTasks] = useState(tasks);
     const [tab, setTab] = useState(sub ? sub : "main");
     /** States for dashboard */
-    const [currProjects, setProjects] = useState(projects.sort((pA, pB) => {
-        const pALower = pA.name.toLowerCase();
-        const pBLower = pB.name.toLowerCase();
-        if (pALower < pBLower) return -1;
-        if (pALower > pBLower) return 1;
-        return 0;
-    }));
+    const [currProjects, setProjects] = useState(projects);
     /** States for logs */
     const [logs, setLogs] = useState<string[]>([]);
 
@@ -143,12 +138,24 @@ const Home = () => {
             </AppBar>
             <Grid
                 container
-                spacing={3}
                 justify="center"
-                style={{ padding: "5px" }}
+                className={styles.contentContainer}
             >
-                {tab === "main" && <ColumnList tasks={currTasks} />}
-                {tab === "other" && <Dashboard projects={currProjects} setProjects={setProjects} />}
+                {tab === "main" && (
+                    <Grid
+                        container
+                        justify="center"
+                        spacing={2}
+                    >
+                        <ColumnList tasks={currTasks} />
+                    </Grid>
+                )}
+                {tab === "other" && (
+                    <Dashboard
+                        projects={currProjects}
+                        setProjects={setProjects}
+                    />
+                )}
                 {tab === "third" && <Logs logs={logs} setLogs={setLogs} />}
             </Grid>
         </DragDropContext>

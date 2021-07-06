@@ -2,10 +2,11 @@
 	min-width: 500px;
 }
 
+.tblPaper {
+	padding: 0;
+	overflow: hidden;
+}
+
 .tblContainer {
-	overflow: scroll;
-	min-width: 500px;
-	width: 80%;
-	height: 500px;
-	margin-top: 30px;
+	max-height: 65vh;
 }

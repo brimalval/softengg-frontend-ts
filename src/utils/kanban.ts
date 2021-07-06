@@ -125,7 +125,7 @@ export const projects: Array<ProjectData> = [
         name: "XYZ Company",
         phase: Phase.POST_CONSTRUCTION,
         priority: Priority.MED,
-        deadline: "ASAP",
+        deadline: undefined,
         engagement: Engagement.BIDDING,
     },
     {
@@ -232,6 +232,31 @@ export const tasks: BoardData = {
             title: "Archived",
             id: "archived",
             tasks: ["dfsa12"],
+        },
+        today: {
+            title: "Today",
+            id: "today",
+            tasks: [],
+        },
+        current: {
+            title: "Current",
+            id: "current",
+            tasks: [],
+        },
+        followUp: {
+            title: "Follow-Up",
+            id: "followUp",
+            tasks: [],
+        },
+        delegated: {
+            title: "Delegated",
+            id: "delegated",
+            tasks: [],
+        },
+        done: {
+            title: "Done",
+            id: "done",
+            tasks: [],
         },
     },
     columnOrder: [],
